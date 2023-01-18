@@ -9,6 +9,10 @@ public class main_camera : MonoBehaviour
     //public Transform target;
     Rect goal;
     int FileCounter;
+    int FileCap = 100;
+    int imgWidth = 640;
+    int imgHeight = 480;
+    string split = "train";
     string dataset_id = "train1";
     int game_object_class_id = 0;
     bool generate_data = true;
@@ -21,9 +25,8 @@ public class main_camera : MonoBehaviour
         print("camera start");
         print(Buoy.transform.position);
 
-        if (generate_data & camera.targetTexture == null){
-            print(1);
-            camera.targetTexture = new RenderTexture(640, 480, 24);
+        if (generate_data && camera.targetTexture == null){
+            camera.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
         }
     }
 
@@ -32,17 +35,66 @@ public class main_camera : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) {
             print("Space Pressed");
-            goal = calcBBoxOnScreen(Buoy);
-            saveImage();
-            saveTxt();
-            print(goal);
+            // generate 10 images and text files for each press
+            while (FileCounter < FileCap){
+                randomLocation();
+                goal = calcBBoxOnScreen(Buoy);
+                //trainValTest();
+                if (saveTxt(game_object_class_id)){
+                    saveImage();
+                    FileCounter++;
+                    print("file: " + FileCounter + " " + split);
+                }
+                //print(goal);
+            }
+            FileCap += 100;
         }
         // get camera location of these vertices
-
+        if (Input.GetKeyDown(KeyCode.P)) {
+            trainValTest();
+            print(split);
+        }
 
         
         // convert to yolo format (bounds image to [0,1])
         // label_class, center_x, center_y, half_width, half_height
+    }
+    
+    void trainValTest(){
+        // test, val, train split
+        if (split == "val") {
+            split = "test";
+        } else if (split == "train") {
+            split = "val";
+        } else {
+            split = "train";
+        }
+    }
+
+    void randomLocation(){
+        var randX = UnityEngine.Random.Range(-25.0f, 9.0f);
+        var randY = UnityEngine.Random.Range(-4.0f, 12.0f);
+        var randZ = UnityEngine.Random.Range(-25.0f, 0.0f);
+        Vector3 newLocation = new Vector3(randX, randY, randZ);
+        GameObject.Find("Main Camera").transform.position = newLocation;
+    }
+
+
+    bool checkDataSensible(float center_w, float center_h, float w, float h){
+        // off the screen
+        if (center_w < 0 || center_w > 1)
+            return false;
+        if (center_h < 0 || center_h > 1)
+            return false;
+        // too close
+        if (w > 2 || h > 2)
+            return false;
+        // entire object not in screen (left and top)
+        if (center_w < w/2 || center_h < h/2)
+            return false;
+        if ((1-center_w) < w/2 || (1-center_h) < h/2)
+            return false;
+        return true;
     }
 
     void saveImage(){
@@ -57,19 +109,34 @@ public class main_camera : MonoBehaviour
  
         var Bytes = Image.EncodeToPNG();
         Destroy(Image);
-        string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/" + FileCounter + ".png";
+        string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/" + split + "/" + FileCounter + ".png";
         print("png: " + save_path);
         if (generate_data) 
+            print("img: " + FileCounter);
             UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
-        FileCounter++;
     }
     
-    void saveTxt(){
-        print(goal.center);
-        print(goal.height);
-        print(goal.width);
-        string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/" + FileCounter + ".txt";
-        print("txt: " + save_path);
+    bool saveTxt(int goalclassID){
+        var center_w = (goal.center.x / imgWidth);
+        var center_h = (goal.center.y / imgHeight);
+        var w = goal.width / imgWidth;
+        var h = goal.height / imgHeight;
+        
+        bool validData = checkDataSensible(center_w, center_h, w, h);
+        if (validData){
+            if (w > 1)
+                w = 1;
+            if (h > 1)
+                h = 1;
+            string dataPoint = goalclassID.ToString() + " " + center_w.ToString() + " " + center_h.ToString() + " " + w.ToString() + " " + h.ToString();
+            string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/"+split+"/"+FileCounter+".txt";
+            //print("txt: " + save_path);
+            //print(dataPoint);
+            var Bytes = System.Text.Encoding.UTF8.GetBytes(dataPoint);
+            if (generate_data) 
+                UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
+        }
+        return validData;
     }
 
     Rect calcBBoxOnScreen(GameObject game_object){
@@ -135,7 +202,7 @@ public class main_camera : MonoBehaviour
         //goal = new Rect(min_x,min_y,width,height);
 
         // [0,0] top left of the screen
-        goal = new Rect(min_x,480-max_y,width,height);
+        goal = new Rect(min_x,imgHeight-max_y,width,height);
         return goal;
     }
 
