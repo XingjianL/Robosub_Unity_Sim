@@ -5,25 +5,38 @@ using UnityEngine;
 public class main_camera : MonoBehaviour
 {
     Camera camera;
-    public GameObject Buoy;
-    //public Transform target;
-    Rect goal;
+    
     int FileCounter;
-    int FileCap = 100;
-    int imgWidth = 640;
+    static int FileBatch = 50;          // how much to generate with each press
+    int FileCap = FileBatch;      
+    int imgWidth = 640;     // image properties
     int imgHeight = 480;
-    string split = "train";
-    string dataset_id = "train1";
-    int game_object_class_id = 0;
-    bool generate_data = true;
+    string split = "train"; // sample category ("train", "val", "test")
+    string dataset_id = "train1";   // dataset name
+    // ID (for yolo training) of the desired objects, comment out if not needed
+    static int[] GameObjectClassIDs = { 0,
+                                        1,
+                                        //2
+                                        };
+    // ID (in Unity Editor Scene) of desired objects, comment out if not needed
+    static string[] GameObjectSceneIDs = {  "Buoy_TommyGun",
+                                            "Buoy_Gman",
+                                            //"Torpedo"
+                                            };
+    GameObject[] game_object = new GameObject[GameObjectClassIDs.Length];
+    Rect[] goal = new Rect[GameObjectClassIDs.Length];
+    bool generate_data = true; // if images should be saved
+
     // Start is called before the first frame update
     void Start()
     {
         camera = Camera.main;
-        Buoy = GameObject.Find("Buoy_TommyGun");
+        for(int i = 0; i < GameObjectClassIDs.Length; i++){
+            game_object[i] = GameObject.Find(GameObjectSceneIDs[i]);
+        }
         camera.enabled = true;
         print("camera start");
-        print(Buoy.transform.position);
+        print(game_object[0].transform.position);
 
         if (generate_data && camera.targetTexture == null){
             camera.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
@@ -38,26 +51,25 @@ public class main_camera : MonoBehaviour
             // generate 10 images and text files for each press
             while (FileCounter < FileCap){
                 randomLocation();
-                goal = calcBBoxOnScreen(Buoy);
+                for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                    goal[i] = calcBBoxOnScreen(game_object[i]);
+                }
                 //trainValTest();
-                if (saveTxt(game_object_class_id)){
+                if (saveTxt()){
                     saveImage();
                     FileCounter++;
                     print("file: " + FileCounter + " " + split);
                 }
+                //FileCounter++;
                 //print(goal);
             }
-            FileCap += 100;
+            FileCap += FileBatch;
         }
         // get camera location of these vertices
         if (Input.GetKeyDown(KeyCode.P)) {
             trainValTest();
             print(split);
         }
-
-        
-        // convert to yolo format (bounds image to [0,1])
-        // label_class, center_x, center_y, half_width, half_height
     }
     
     void trainValTest(){
@@ -80,21 +92,59 @@ public class main_camera : MonoBehaviour
     }
 
 
-    bool checkDataSensible(float center_w, float center_h, float w, float h){
-        // off the screen
+    int checkDataSensible(float center_w, float center_h, float w, float h){
+        // center of object off the screen
         if (center_w < 0 || center_w > 1)
-            return false;
+            return 0;
         if (center_h < 0 || center_h > 1)
-            return false;
+            return 0;
         // too close
-        if (w > 2 || h > 2)
-            return false;
-        // entire object not in screen (left and top)
-        if (center_w < w/2 || center_h < h/2)
-            return false;
-        if ((1-center_w) < w/2 || (1-center_h) < h/2)
-            return false;
-        return true;
+        if (w > 1.2 || h > 1.2)
+            return 0;
+        // object center in the screen, but not entire object (need bound adjustment)
+        if (center_w > 0 && center_w < 1 && center_h > 0 && center_h < 1) {
+            // left and top bound
+            if (center_w < w/2 || center_h < h/2)
+                return 2;
+            // right and bottom bound
+            if ((1-center_w) < w/2 || (1-center_h) < h/2)
+                return 2;
+        }
+        // everything in screen
+        return 1;
+    }
+    float[] boundAdjust(float center_w, float center_h, float w, float h){
+        float newcenter_w = center_w;
+        float newcenter_h = center_h;
+        float newwidth = w;
+        float newheight = h;
+        float delta;
+        // left edge
+        if (center_w < w/2){
+            delta = (w/2 - center_w);
+            newcenter_w = center_w + delta/2;
+            newwidth = w - delta;
+        }
+        // top edge
+        if (center_h < h/2){
+            delta = (h/2 - center_h);
+            newcenter_h = center_h + delta/2;
+            newheight = h - delta;
+        }
+        // right edge
+        if ((1-center_w) < w/2){
+            delta = (w/2 - (1-center_w));
+            newcenter_w = center_w - delta/2;
+            newwidth = w - delta;
+        }
+        // bottom edge
+        if ((1-center_h) < h/2){
+            delta = (h/2 - (1-center_h));
+            newcenter_h = center_h - delta/2;
+            newheight = h - delta;
+        }
+        float[] bounds = {newcenter_w, newcenter_h, newwidth, newheight};
+        return bounds;
     }
 
     void saveImage(){
@@ -116,31 +166,45 @@ public class main_camera : MonoBehaviour
             UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
     }
     
-    bool saveTxt(int goalclassID){
-        var center_w = (goal.center.x / imgWidth);
-        var center_h = (goal.center.y / imgHeight);
-        var w = goal.width / imgWidth;
-        var h = goal.height / imgHeight;
-        
-        bool validData = checkDataSensible(center_w, center_h, w, h);
-        if (validData){
-            if (w > 1)
-                w = 1;
-            if (h > 1)
-                h = 1;
-            string dataPoint = goalclassID.ToString() + " " + center_w.ToString() + " " + center_h.ToString() + " " + w.ToString() + " " + h.ToString();
+    bool saveTxt(){
+        string dataPoint = "";
+        int validDataCount = 0;
+        for (int i = 0; i < GameObjectClassIDs.Length; i++){
+            var center_w = (goal[i].center.x / imgWidth);
+            var center_h = (goal[i].center.y / imgHeight);
+            var w = goal[i].width / imgWidth;
+            var h = goal[i].height / imgHeight;
+
+            int validData = checkDataSensible(center_w, center_h, w, h);
+            if (validData == 2){
+                var retBounds = boundAdjust(center_w, center_h, w, h);
+                center_w = retBounds[0];
+                center_h = retBounds[1];
+                w = retBounds[2];
+                h = retBounds[3];
+            }
+            if (validData >= 1){
+                if (w > 1)
+                    w = 1;
+                if (h > 1)
+                    h = 1;
+                dataPoint += GameObjectClassIDs[i].ToString() + " " + center_w.ToString() + " " + center_h.ToString() + " " + w.ToString() + " " + h.ToString() + "\n";
+                validDataCount+=1;
+            }
+        }
+        if (validDataCount > 0){
             string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/"+split+"/"+FileCounter+".txt";
-            //print("txt: " + save_path);
-            //print(dataPoint);
+                //print("txt: " + save_path);
+                //print(dataPoint);
             var Bytes = System.Text.Encoding.UTF8.GetBytes(dataPoint);
             if (generate_data) 
                 UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
         }
-        return validData;
+        return validDataCount > 0;
     }
 
-    Rect calcBBoxOnScreen(GameObject game_object){
-        Collider r = game_object.GetComponent<Collider>();
+    Rect calcBBoxOnScreen(GameObject game_object_){
+        Collider r = game_object_.GetComponent<Collider>();
         if (r == null)
             print(r);
         
@@ -202,14 +266,16 @@ public class main_camera : MonoBehaviour
         //goal = new Rect(min_x,min_y,width,height);
 
         // [0,0] top left of the screen
-        goal = new Rect(min_x,imgHeight-max_y,width,height);
-        return goal;
+        Rect goal_ = new Rect(min_x,imgHeight-max_y,width,height);
+        return goal_;
     }
 
     
 
     void OnGUI()
     {
-        GUI.Box(goal, "box");
+        for (int i = 0; i < GameObjectClassIDs.Length; i++){
+            GUI.Box(goal[i], "box"+i.ToString());
+        }
     }
 }
