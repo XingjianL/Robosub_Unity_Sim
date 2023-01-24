@@ -27,6 +27,19 @@ public class main_camera : MonoBehaviour
     Rect[] goal = new Rect[GameObjectClassIDs.Length];
     bool generate_data = true; // if images should be saved
 
+    // random settings
+    // skyboxes
+    Material[] skyboxes = new Material[19];
+    void init_rand_settings(){
+        for (int i = 0; i < skyboxes.Length; i++){
+            string skybox_path = "skyboxes/skybox (" + (i+1).ToString() + ")";
+            skyboxes[i] = Resources.Load<Material>(skybox_path);
+            print(skybox_path);
+            print(Resources.Load<Material>(skybox_path));
+        }
+    }
+    // pool rotation
+
     // Start is called before the first frame update
     void Start()
     {
@@ -41,6 +54,7 @@ public class main_camera : MonoBehaviour
         if (generate_data && camera.targetTexture == null){
             camera.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
         }
+        init_rand_settings();
     }
 
     // Update is called once per frame
@@ -51,6 +65,7 @@ public class main_camera : MonoBehaviour
             // generate 10 images and text files for each press
             while (FileCounter < FileCap){
                 randomLocation();
+                randomSkyBox();
                 for(int i = 0; i < GameObjectClassIDs.Length; i++){
                     goal[i] = calcBBoxOnScreen(game_object[i]);
                 }
@@ -69,6 +84,9 @@ public class main_camera : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) {
             trainValTest();
             print(split);
+        }
+        if (Input.GetKeyDown(KeyCode.O)) {
+            randomSkyBox();
         }
     }
     
@@ -89,6 +107,13 @@ public class main_camera : MonoBehaviour
         var randZ = UnityEngine.Random.Range(-25.0f, 0.0f);
         Vector3 newLocation = new Vector3(randX, randY, randZ);
         GameObject.Find("Main Camera").transform.position = newLocation;
+    }
+    void randomSkyBox(){
+        int randInt = UnityEngine.Random.Range(0, skyboxes.Length-1);
+        RenderSettings.skybox = skyboxes[randInt];
+        DynamicGI.UpdateEnvironment();
+
+        print(skyboxes[randInt]);
     }
 
 
