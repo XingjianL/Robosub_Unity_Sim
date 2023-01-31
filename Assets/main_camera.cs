@@ -66,6 +66,7 @@ public class main_camera : MonoBehaviour
             while (FileCounter < FileCap){
                 randomLocation();
                 randomSkyBox();
+                randomRotation();
                 for(int i = 0; i < GameObjectClassIDs.Length; i++){
                     goal[i] = calcBBoxOnScreen(game_object[i]);
                 }
@@ -87,6 +88,7 @@ public class main_camera : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.O)) {
             randomSkyBox();
+            randomRotation();
         }
     }
     
@@ -115,7 +117,13 @@ public class main_camera : MonoBehaviour
 
         print(skyboxes[randInt]);
     }
-
+    void randomRotation(){
+        // not really random
+        GameObject swimming_pool = GameObject.Find("exterior_swimming_pool");
+        swimming_pool.transform.Rotate(0.0f, 15.0f, 0.0f, Space.World);
+        GameObject DecalProjector = GameObject.Find("Decal_Projector");
+        DecalProjector.transform.Rotate(0.0f, 10.0f, 0.0f, Space.World);
+    }
 
     int checkDataSensible(float center_w, float center_h, float w, float h){
         // center of object off the screen

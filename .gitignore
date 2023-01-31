@@ -72,9 +72,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # other for this project
-/Assets/SkySeriesFreebie/*
-/Assets/SkySeriesFreebie.meta
-/Assets/ML_Generated_Dataset/yolov5/*/*/*.png
-/Assets/ML_Generated_Dataset/yolov5/*/*/*.txt
-/Assets/ML_Generated_Dataset/yolov5/*/*/*.meta
+#/Assets/SkySeriesFreebie/*
+#/Assets/SkySeriesFreebie.meta
 
+Assets/ML_Generated_Dataset/yolov5/*/*/*/*
