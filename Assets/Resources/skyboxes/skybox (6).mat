@@ -31,9 +31,9 @@ Material:
     m_Ints: []
     m_Floats:
     - <noninit>: 0
-    - _Exposure: 0.9
-    - _Rotation: 0
+    - _Exposure: 0.6
+    - _Rotation: 360
     m_Colors:
     - <noninit>: {r: 0, g: 9.150861e-35, b: 0, a: 9.150824e-35}
-    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+    - _Tint: {r: 0.3437522, g: 0.5443259, b: 0.6698113, a: 0.5}
   m_BuildTextureStacks: []

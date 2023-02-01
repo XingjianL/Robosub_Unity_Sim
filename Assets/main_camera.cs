@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class main_camera : MonoBehaviour
 {
@@ -12,16 +13,20 @@ public class main_camera : MonoBehaviour
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
     string split = "train"; // sample category ("train", "val", "test")
-    string dataset_id = "train1";   // dataset name
+    // dataset name
+    //string dataset_id = "Buoy";
+    string dataset_id = "Torpedoes";   
     // ID (for yolo training) of the desired objects, comment out if not needed
-    static int[] GameObjectClassIDs = { 0,
-                                        1,
-                                        //2
+    static int[] GameObjectClassIDs = { //0, // Buoy_TommyGun
+                                        //1, // Buoy_Gman
+                                        0, // Torpedoes_Gman
+                                        1  // Torpedoes_Bootlegger
                                         };
     // ID (in Unity Editor Scene) of desired objects, comment out if not needed
-    static string[] GameObjectSceneIDs = {  "Buoy_TommyGun",
-                                            "Buoy_Gman",
-                                            //"Torpedo"
+    static string[] GameObjectSceneIDs = {  //"Buoy_TommyGun",
+                                            //"Buoy_Gman",
+                                            "Torpedoes_Gman",
+                                            "Torpedoes_Bootlegger"
                                             };
     GameObject[] game_object = new GameObject[GameObjectClassIDs.Length];
     Rect[] goal = new Rect[GameObjectClassIDs.Length];
@@ -34,8 +39,8 @@ public class main_camera : MonoBehaviour
         for (int i = 0; i < skyboxes.Length; i++){
             string skybox_path = "skyboxes/skybox (" + (i+1).ToString() + ")";
             skyboxes[i] = Resources.Load<Material>(skybox_path);
-            print(skybox_path);
-            print(Resources.Load<Material>(skybox_path));
+            //print(skybox_path);
+            //print(Resources.Load<Material>(skybox_path));
         }
     }
     // pool rotation
@@ -55,6 +60,17 @@ public class main_camera : MonoBehaviour
             camera.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
         }
         init_rand_settings();
+
+        // path to dataset storage
+        var success = Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/train");
+        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/val");
+        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/test");
+        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
+        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
+        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
+        print("Generating Dataset Path");
+        print(success);
+
     }
 
     // Update is called once per frame
