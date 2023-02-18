@@ -118,10 +118,10 @@ public class main_camera : MonoBehaviour
             split = "train";
         }
     }
-
+    // adjust sampling space (where the camera renders a picture)
     void randomLocation(){
         var randX = UnityEngine.Random.Range(-25.0f, 9.0f);
-        var randY = UnityEngine.Random.Range(-4.0f, 12.0f);
+        var randY = UnityEngine.Random.Range(-4.0f, 6.5f);
         var randZ = UnityEngine.Random.Range(-25.0f, 0.0f);
         Vector3 newLocation = new Vector3(randX, randY, randZ);
         GameObject.Find("Main Camera").transform.position = newLocation;
