@@ -43,10 +43,10 @@ MonoBehaviour:
     m_Value: 200
   redOutGreenIn:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: -63
   redOutBlueIn:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: -17
   greenOutRedIn:
     m_OverrideState: 1
     m_Value: 0
@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c23e3b12dc18c42a140437e53d3951, type: 3}
   m_Name: Tonemapping
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   mode:
     m_OverrideState: 1
     m_Value: 0
@@ -137,28 +137,28 @@ MonoBehaviour:
   active: 1
   mode:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
   gaussianStart:
     m_OverrideState: 1
-    m_Value: 70
+    m_Value: 20
   gaussianEnd:
     m_OverrideState: 1
     m_Value: 100
   gaussianMaxRadius:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 1.5
   highQualitySampling:
     m_OverrideState: 1
     m_Value: 0
   focusDistance:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 8
   aperture:
     m_OverrideState: 1
-    m_Value: 10
+    m_Value: 8
   focalLength:
     m_OverrideState: 1
-    m_Value: 120
+    m_Value: 130
   bladeCount:
     m_OverrideState: 1
     m_Value: 5
@@ -180,7 +180,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 899c54efeace73346a0a16faa3afe726, type: 3}
   m_Name: Vignette
   m_EditorClassIdentifier: 
-  active: 0
+  active: 1
   color:
     m_OverrideState: 1
     m_Value: {r: 0.33588463, g: 0.76996064, b: 0.8018868, a: 1}
@@ -289,7 +289,7 @@ MonoBehaviour:
     m_Value: 20
   colorFilter:
     m_OverrideState: 1
-    m_Value: {r: 0.3712904, g: 0.8540696, b: 0.9989032, a: 1}
+    m_Value: {r: 0.44303793, g: 1.0166554, b: 1.1892071, a: 1}
   hueShift:
     m_OverrideState: 1
     m_Value: 10

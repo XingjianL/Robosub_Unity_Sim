@@ -13,21 +13,23 @@ public class main_camera : MonoBehaviour
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
     string split = "train"; // sample category ("train", "val", "test")
+    
+    // SELECT YOUR DATASET
+    static int dataSelection = 1;
     // dataset name
-    //string dataset_id = "Buoy";
-    string dataset_id = "Torpedoes";   
-    // ID (for yolo training) of the desired objects, comment out if not needed
-    static int[] GameObjectClassIDs = { //0, // Buoy_TommyGun
-                                        //1, // Buoy_Gman
-                                        0, // Torpedoes_Gman
-                                        1  // Torpedoes_Bootlegger
-                                        };
-    // ID (in Unity Editor Scene) of desired objects, comment out if not needed
-    static string[] GameObjectSceneIDs = {  //"Buoy_TommyGun",
-                                            //"Buoy_Gman",
-                                            "Torpedoes_Gman",
-                                            "Torpedoes_Bootlegger"
-                                            };
+    static string[] dataset_ids = { "All",
+                                    "Buoy",
+                                    "Torpedoes"};
+    static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
+                                                    new int[] {0,1},
+                                                    new int[] {0,1}};
+    static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_TommyGun","Buoy_Gman","Torpedoes_Gman","Torpedoes_Bootlegger"},
+                                                        new string[] {"Buoy_TommyGun","Buoy_Gman"},
+                                                        new string[] {"Torpedoes_Bootlegger","Torpedoes_Gman"}};
+    string dataset_id = dataset_ids[dataSelection];
+    static int[] GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
+    static string[] GameObjectSceneIDs = GameObjectSceneIDs_Collection[dataSelection];
+    
     GameObject[] game_object = new GameObject[GameObjectClassIDs.Length];
     Rect[] goal = new Rect[GameObjectClassIDs.Length];
     bool generate_data = true; // if images should be saved
@@ -83,6 +85,7 @@ public class main_camera : MonoBehaviour
                 randomLocation();
                 randomSkyBox();
                 randomRotation();
+                randomRenderOptions();
                 for(int i = 0; i < GameObjectClassIDs.Length; i++){
                     goal[i] = calcBBoxOnScreen(game_object[i]);
                 }
@@ -105,6 +108,8 @@ public class main_camera : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.O)) {
             randomSkyBox();
             randomRotation();
+            randomRenderOptions();
+            randomLocation();
         }
     }
     
@@ -140,7 +145,9 @@ public class main_camera : MonoBehaviour
         GameObject DecalProjector = GameObject.Find("Decal_Projector");
         DecalProjector.transform.Rotate(0.0f, 10.0f, 0.0f, Space.World);
     }
-
+    void randomRenderOptions(){
+        RenderSettings.fogEndDistance = UnityEngine.Random.Range(50, 350);
+    }
     int checkDataSensible(float center_w, float center_h, float w, float h){
         // center of object off the screen
         if (center_w < 0 || center_w > 1)
