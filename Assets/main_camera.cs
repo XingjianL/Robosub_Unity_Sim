@@ -15,17 +15,17 @@ public class main_camera : MonoBehaviour
     string split = "train"; // sample category ("train", "val", "test")
     
     // SELECT YOUR DATASET
-    static int dataSelection = 1;
+    static int dataSelection = 2;
     // dataset name
     static string[] dataset_ids = { "All",
                                     "Buoy",
                                     "Torpedoes"};
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
                                                     new int[] {0,1},
-                                                    new int[] {0,1}};
+                                                    new int[] {0,1,2,3}};
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_TommyGun","Buoy_Gman","Torpedoes_Gman","Torpedoes_Bootlegger"},
                                                         new string[] {"Buoy_TommyGun","Buoy_Gman"},
-                                                        new string[] {"Torpedoes_Bootlegger","Torpedoes_Gman"}};
+                                                        new string[] {"Torpedoes_Bootlegger","Torpedoes_Gman","smalltarget_Bootlegger_Torp","smalltarget_Gman_Torp"}};
     string dataset_id = dataset_ids[dataSelection];
     static int[] GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
     static string[] GameObjectSceneIDs = GameObjectSceneIDs_Collection[dataSelection];
