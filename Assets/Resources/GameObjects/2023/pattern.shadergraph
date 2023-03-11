@@ -56,6 +56,9 @@
         },
         {
             "m_Id": "91576645b07e4b4b84a0702789eb1021"
+        },
+        {
+            "m_Id": "3567cc9a16e64f98a7eb672ef5f52763"
         }
     ],
     "m_GroupDatas": [],
@@ -361,6 +364,65 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "2ff23e043cfe4b069c30ba6763545fb5",
+    "m_Id": 1,
+    "m_DisplayName": "Sine Time",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Sine Time",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.TimeNode",
+    "m_ObjectId": "3567cc9a16e64f98a7eb672ef5f52763",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Time",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1233.5999755859375,
+            "y": 308.0,
+            "width": 124.0,
+            "height": 172.79995727539063
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "7ef4175a02164f8dbfcaec5868659c40"
+        },
+        {
+            "m_Id": "2ff23e043cfe4b069c30ba6763545fb5"
+        },
+        {
+            "m_Id": "45a1868a9567496695c968f4cd8c7467"
+        },
+        {
+            "m_Id": "acd0c4b25beb40c4bc257a1289d0872d"
+        },
+        {
+            "m_Id": "a3305da9c4c347d0b55c3692ed076449"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.UVMaterialSlot",
     "m_ObjectId": "3c5c17962aee41a5951c2f34a6a2d889",
     "m_Id": 2,
@@ -386,7 +448,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "442376816792408fbbbf26a7028647de",
     "m_Id": 0,
-    "m_DisplayName": "Rotation",
+    "m_DisplayName": "_Rotation",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -416,6 +478,21 @@
     },
     "m_Labels": [],
     "m_Channel": 0
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "45a1868a9567496695c968f4cd8c7467",
+    "m_Id": 2,
+    "m_DisplayName": "Cosine Time",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Cosine Time",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
 }
 
 {
@@ -587,9 +664,9 @@
     "m_Guid": {
         "m_GuidSerialized": "869131d6-81f3-4d69-824c-9c05be5476c1"
     },
-    "m_Name": "PatternTexture",
+    "m_Name": "_PatternTexture",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "PatternTexture",
+    "m_RefNameGeneratedByDisplayName": "_PatternTexture",
     "m_DefaultReferenceName": "_PatternTexture",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
@@ -620,6 +697,21 @@
     "m_ShaderOutputName": "Rotation",
     "m_StageCapability": 3,
     "m_Value": 2.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "7ef4175a02164f8dbfcaec5868659c40",
+    "m_Id": 0,
+    "m_DisplayName": "Time",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Time",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
     "m_DefaultValue": 0.0,
     "m_Labels": []
 }
@@ -845,6 +937,36 @@
 {
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "a3305da9c4c347d0b55c3692ed076449",
+    "m_Id": 4,
+    "m_DisplayName": "Smooth Delta",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Smooth Delta",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
+    "m_ObjectId": "acd0c4b25beb40c4bc257a1289d0872d",
+    "m_Id": 3,
+    "m_DisplayName": "Delta Time",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Delta Time",
+    "m_StageCapability": 3,
+    "m_Value": 0.0,
+    "m_DefaultValue": 0.0,
+    "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "b29794da2eb74fbdb1bd202d66b9dca5",
     "m_Id": 4,
     "m_DisplayName": "R",
@@ -960,9 +1082,9 @@
     "m_Guid": {
         "m_GuidSerialized": "e9860cf8-b3c5-4995-99f3-ebaf94bb81d3"
     },
-    "m_Name": "Rotation",
+    "m_Name": "_Rotation",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Rotation",
+    "m_RefNameGeneratedByDisplayName": "_Rotation",
     "m_DefaultReferenceName": "_Rotation",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
@@ -1018,7 +1140,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
     "m_ObjectId": "cb17a3a27954401398b072862dda60ef",
     "m_Id": 0,
-    "m_DisplayName": "PatternTexture",
+    "m_DisplayName": "_PatternTexture",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -1136,10 +1258,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -562.3753662109375,
-            "y": 5.631799221038818,
-            "width": 0.0,
-            "height": 0.0
+            "x": -696.7999877929688,
+            "y": 68.80000305175781,
+            "width": 162.4000244140625,
+            "height": 33.59996795654297
         }
     },
     "m_Slots": [

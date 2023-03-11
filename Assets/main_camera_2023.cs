@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class main_camera : MonoBehaviour
+public class main_camera_2023 : MonoBehaviour
 {
     Camera camera;
     
@@ -37,6 +37,9 @@ public class main_camera : MonoBehaviour
     // random settings
     // skyboxes
     Material[] skyboxes = new Material[19];
+
+    // coroutines
+    private bool spacekeypressed = false;
     void init_rand_settings(){
         for (int i = 0; i < skyboxes.Length; i++){
             string skybox_path = "skyboxes/skybox (" + (i+1).ToString() + ")";
@@ -74,32 +77,44 @@ public class main_camera : MonoBehaviour
         print(success);
 
     }
-
+    private IEnumerator GenerateData()
+    {
+        print("COROUTINE");
+        spacekeypressed = true;
+            // generate 10 images and text files for each press
+        if (FileCounter < FileCap){
+            randomLocation();
+            randomSkyBox();
+            randomRotation();
+            randomRenderOptions();
+            randomObjectsProperty(game_object);
+            for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                goal[i] = calcBBoxOnScreen(game_object[i]);
+            }
+            //trainValTest();
+            if (saveTxt()){
+                saveImage();
+                FileCounter++;
+                print("file: " + FileCounter + " " + split);
+            }
+            //FileCounter++;
+            //print(goal);
+        }
+        if (FileCounter >= FileCap){
+            spacekeypressed = false;
+            FileCap += FileBatch;
+            print("COROUTINE BREAK");
+            yield break;
+        }
+        yield return new WaitForEndOfFrame();
+    }
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            print("Space Pressed");
-            // generate 10 images and text files for each press
-            while (FileCounter < FileCap){
-                randomLocation();
-                randomSkyBox();
-                randomRotation();
-                randomRenderOptions();
-                for(int i = 0; i < GameObjectClassIDs.Length; i++){
-                    goal[i] = calcBBoxOnScreen(game_object[i]);
-                }
-                //trainValTest();
-                if (saveTxt()){
-                    saveImage();
-                    FileCounter++;
-                    print("file: " + FileCounter + " " + split);
-                }
-                //FileCounter++;
-                //print(goal);
-            }
-            FileCap += FileBatch;
+        if (Input.GetKeyDown(KeyCode.Space) || spacekeypressed) {
+            StartCoroutine(GenerateData());
         }
+
         // get camera location of these vertices
         if (Input.GetKeyDown(KeyCode.P)) {
             trainValTest();
@@ -110,6 +125,7 @@ public class main_camera : MonoBehaviour
             randomRotation();
             randomRenderOptions();
             randomLocation();
+            randomObjectsProperty(game_object);
         }
     }
     
@@ -136,7 +152,7 @@ public class main_camera : MonoBehaviour
         RenderSettings.skybox = skyboxes[randInt];
         DynamicGI.UpdateEnvironment();
 
-        print(skyboxes[randInt]);
+        //print(skyboxes[randInt]);
     }
     void randomRotation(){
         // not really random
@@ -147,6 +163,22 @@ public class main_camera : MonoBehaviour
     }
     void randomRenderOptions(){
         RenderSettings.fogEndDistance = UnityEngine.Random.Range(50, 350);
+    }
+    void randomObjectsProperty(GameObject[] game_objects){
+        for (int i = 0; i < game_objects.Length; i++){
+            for (int j = 0; j < game_objects[i].transform.childCount; j++){
+                var childObject = game_objects[i].transform.GetChild(j).gameObject;
+                var m = childObject.GetComponent<Renderer>().material;
+                m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
+                print(m);
+            }
+            //for (int j = 0; j < parts.Length; j++){
+            //    var m = parts[j].GetComponent<Renderer>().material;
+            //    m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
+            //    print(m);
+            //}
+        }
+        
     }
     int checkDataSensible(float center_w, float center_h, float w, float h){
         // center of object off the screen
