@@ -83,11 +83,17 @@ public class main_camera_2023 : MonoBehaviour
         spacekeypressed = true;
             // generate 10 images and text files for each press
         if (FileCounter < FileCap){
-            randomLocation();
-            randomSkyBox();
-            randomRotation();
-            randomRenderOptions();
-            randomObjectsProperty(game_object);
+            randomLocation();   // camera position
+            randomSkyBox();     // skybox material
+            randomRotation();   // pool rotation
+            randomRenderOptions();  // engine render settings (fog)
+            randomObjectsProperty(game_object); // game object material rotation
+
+            // global volume settings (filters)
+            GameObject global_volume = GameObject.Find("Global Volume");
+            GlobalVolumnScript gvscript = global_volume.GetComponent<GlobalVolumnScript>();
+            gvscript.randomWaterColor();
+
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
@@ -126,6 +132,10 @@ public class main_camera_2023 : MonoBehaviour
             randomRenderOptions();
             randomLocation();
             randomObjectsProperty(game_object);
+            // global volume settings (filters)
+            GameObject global_volume = GameObject.Find("Global Volume");
+            GlobalVolumnScript gvscript = global_volume.GetComponent<GlobalVolumnScript>();
+            gvscript.randomWaterColor();
         }
     }
     
@@ -170,7 +180,7 @@ public class main_camera_2023 : MonoBehaviour
                 var childObject = game_objects[i].transform.GetChild(j).gameObject;
                 var m = childObject.GetComponent<Renderer>().material;
                 m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
-                print(m);
+                //print(m);
             }
             //for (int j = 0; j < parts.Length; j++){
             //    var m = parts[j].GetComponent<Renderer>().material;
@@ -250,7 +260,7 @@ public class main_camera_2023 : MonoBehaviour
         string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/" + split + "/" + FileCounter + ".png";
         print("png: " + save_path);
         if (generate_data) 
-            print("img: " + FileCounter);
+            //print("img: " + FileCounter);
             UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
     }
     

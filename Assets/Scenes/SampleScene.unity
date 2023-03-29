@@ -374,6 +374,7 @@ GameObject:
   m_Component:
   - component: {fileID: 435696503}
   - component: {fileID: 435696502}
+  - component: {fileID: 435696504}
   m_Layer: 0
   m_Name: Global Volume
   m_TagString: Untagged
@@ -413,6 +414,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &435696504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435696501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad49f58f10c802d4d91fb494980d5d58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 435696502}
+  pool_surface: {fileID: 462363031}
 --- !u!1 &462363031
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +441,7 @@ GameObject:
   - component: {fileID: 462363033}
   - component: {fileID: 462363032}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: PoolSurface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
