@@ -74,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _PatternTexture:
-        m_Texture: {fileID: 2800000, guid: c091e2679cd10ec46bc38d24b2f842f9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 14b1869b0a81ddd40b6715314c829482, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
