@@ -25,15 +25,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tex:
-        m_Texture: {fileID: 8900000, guid: 8967f190ed29c46418093a47d66daee8, type: 3}
+        m_Texture: {fileID: 8900000, guid: 99af420a4ccafa74abdc47436d8b0685, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - <noninit>: 0
-    - _Exposure: 0.6
-    - _Rotation: 360
+    - _Exposure: 0.5
+    - _Rotation: 0
     m_Colors:
-    - <noninit>: {r: 0, g: 9.215311e-35, b: 0, a: 9.215274e-35}
-    - _Tint: {r: 0.5283019, g: 0.46513364, b: 0.38077608, a: 0.5}
+    - <noninit>: {r: 0, g: 9.254479e-35, b: 0, a: 9.254442e-35}
+    - _Tint: {r: 0.49826992, g: 0.5139482, b: 0.5294118, a: 0.5}
   m_BuildTextureStacks: []

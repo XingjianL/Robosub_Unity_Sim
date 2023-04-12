@@ -36,7 +36,7 @@ public class main_camera : MonoBehaviour
 
     // random settings
     // skyboxes
-    Material[] skyboxes = new Material[19];
+    Material[] skyboxes = new Material[9];
     void init_rand_settings(){
         for (int i = 0; i < skyboxes.Length; i++){
             string skybox_path = "skyboxes/skybox (" + (i+1).ToString() + ")";

@@ -36,7 +36,7 @@ public class main_camera_2023 : MonoBehaviour
 
     // random settings
     // skyboxes
-    Material[] skyboxes = new Material[19];
+    Material[] skyboxes = new Material[9];
 
     // coroutines
     private bool spacekeypressed = false;
