@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class GlobalVolumnScript : MonoBehaviour
+public class WaterPostProcess : MonoBehaviour
 {
     public Volume volume;
     ColorAdjustments colorAdj;
@@ -23,6 +23,7 @@ public class GlobalVolumnScript : MonoBehaviour
     public void randomWaterColor()
     {
         // volume
+        volume.weight = UnityEngine.Random.Range(0.05f,1);
         var randG = UnityEngine.Random.Range(100, 160);
         var randB = UnityEngine.Random.Range(100, 160);
         var intensity = 1.5f;

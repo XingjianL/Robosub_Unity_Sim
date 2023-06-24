@@ -8,7 +8,7 @@ public class main_camera_2023 : MonoBehaviour
     Camera camera;
     
     int FileCounter;
-    static int FileBatch = 50;          // how much to generate with each press
+    static int FileBatch = 100;          // how much to generate with each press
     int FileCap = FileBatch;      
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
@@ -19,13 +19,16 @@ public class main_camera_2023 : MonoBehaviour
     // dataset name
     static string[] dataset_ids = { "All",
                                     "Buoy",
-                                    "Torpedoes"};
+                                    "Torpedoes",
+                                    "Gate"};
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
                                                     new int[] {0,1},
-                                                    new int[] {0,1,2,3}};
+                                                    new int[] {0,1,2,3},
+                                                    new int[] {0,1,2}};
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
                                                         new string[] {"Buoy_1","Buoy_2"},
-                                                        new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"}};
+                                                        new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
+                                                        new string[] {"Gate_0","Gate_1", "Gate_2"}};
     string dataset_id = dataset_ids[dataSelection];
     static int[] GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
     static string[] GameObjectSceneIDs = GameObjectSceneIDs_Collection[dataSelection];
@@ -67,12 +70,12 @@ public class main_camera_2023 : MonoBehaviour
         init_rand_settings();
 
         // path to dataset storage
-        var success = Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/train");
-        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/val");
-        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/test");
-        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
-        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
-        Directory.CreateDirectory(Application.dataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
+        var success = Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/train");
+        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/val");
+        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/test");
+        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
+        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
+        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
         print("Generating Dataset Path");
         print(success);
 
@@ -87,11 +90,12 @@ public class main_camera_2023 : MonoBehaviour
             randomSkyBox();     // skybox material
             randomRotation();   // pool rotation
             randomRenderOptions();  // engine render settings (fog)
-            randomObjectsProperty(game_object); // game object material rotation
-
+            if (dataSelection != 3){
+                randomObjectsProperty(game_object); // game object material rotation
+            }
             // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Global Volume");
-            GlobalVolumnScript gvscript = global_volume.GetComponent<GlobalVolumnScript>();
+            GameObject global_volume = GameObject.Find("Water Volume");
+            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
             gvscript.randomWaterColor();
 
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
@@ -131,10 +135,12 @@ public class main_camera_2023 : MonoBehaviour
             randomRotation();
             randomRenderOptions();
             randomLocation();
-            randomObjectsProperty(game_object);
+            if (dataSelection != 3){
+                randomObjectsProperty(game_object);
+            }
             // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Global Volume");
-            GlobalVolumnScript gvscript = global_volume.GetComponent<GlobalVolumnScript>();
+            GameObject global_volume = GameObject.Find("Water Volume");
+            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
             gvscript.randomWaterColor();
         }
     }
@@ -257,7 +263,7 @@ public class main_camera_2023 : MonoBehaviour
  
         var Bytes = Image.EncodeToPNG();
         Destroy(Image);
-        string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/" + split + "/" + FileCounter + ".png";
+        string save_path = Application.persistentDataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/" + split + "/" + FileCounter + ".png";
         print("png: " + save_path);
         if (generate_data) 
             //print("img: " + FileCounter);
@@ -291,7 +297,7 @@ public class main_camera_2023 : MonoBehaviour
             }
         }
         if (validDataCount > 0){
-            string save_path = Application.dataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/"+split+"/"+FileCounter+".txt";
+            string save_path = Application.persistentDataPath + "/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/"+split+"/"+FileCounter+".txt";
                 //print("txt: " + save_path);
                 //print(dataPoint);
             var Bytes = System.Text.Encoding.UTF8.GetBytes(dataPoint);
