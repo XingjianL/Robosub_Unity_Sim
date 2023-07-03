@@ -22,11 +22,11 @@ public class main_camera_2023 : MonoBehaviour
                                     "Torpedoes",
                                     "Gate"};
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
-                                                    new int[] {0,1},
+                                                    new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
                                                     new int[] {0,1,2}};
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
-                                                        new string[] {"Buoy_1","Buoy_2"},
+                                                        new string[] {"earthbuoy1","earthbuoy2","abydoesbuoy1","abydoesbuoy2"},
                                                         new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
                                                         new string[] {"Gate_0","Gate_1", "Gate_2"}};
     string dataset_id = dataset_ids[dataSelection];
@@ -186,8 +186,11 @@ public class main_camera_2023 : MonoBehaviour
                 var childObject = game_objects[i].transform.GetChild(j).gameObject;
                 var m = childObject.GetComponent<Renderer>().material;
                 m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
+                
                 //print(m);
             }
+            var _m = game_objects[i].GetComponent<Renderer>().material;
+            _m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
             //for (int j = 0; j < parts.Length; j++){
             //    var m = parts[j].GetComponent<Renderer>().material;
             //    m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
