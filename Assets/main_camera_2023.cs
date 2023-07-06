@@ -16,19 +16,25 @@ public class main_camera_2023 : MonoBehaviour
     
     // SELECT YOUR DATASET
     static int dataSelection = 1;
+    bool camSelection = false; // true: front camera, false: down camera
     // dataset name
     static string[] dataset_ids = { "All",
                                     "Buoy",
                                     "Torpedoes",
-                                    "Gate"};
+                                    "Gate",
+                                    "Bins"};
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
-                                                    new int[] {0,1,2}};
+                                                    new int[] {0,1,2},
+                                                    new int[] {0,1,2}
+                                                    };
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
                                                         new string[] {"earthbuoy1","earthbuoy2","abydoesbuoy1","abydoesbuoy2"},
                                                         new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
-                                                        new string[] {"Gate_0","Gate_1", "Gate_2"}};
+                                                        new string[] {"Gate_0","Gate_1", "Gate_2"},
+                                                        new string[] {"Bin_Cover","Bin_1", "Bin_2"},
+                                                        };
     string dataset_id = dataset_ids[dataSelection];
     static int[] GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
     static string[] GameObjectSceneIDs = GameObjectSceneIDs_Collection[dataSelection];
@@ -86,7 +92,7 @@ public class main_camera_2023 : MonoBehaviour
         spacekeypressed = true;
             // generate 10 images and text files for each press
         if (FileCounter < FileCap){
-            randomLocation();   // camera position
+            randomLocation(camSelection);   // camera position
             randomSkyBox();     // skybox material
             randomRotation();   // pool rotation
             randomRenderOptions();  // engine render settings (fog)
@@ -134,7 +140,7 @@ public class main_camera_2023 : MonoBehaviour
             randomSkyBox();
             randomRotation();
             randomRenderOptions();
-            randomLocation();
+            randomLocation(camSelection);
             if (dataSelection != 3){
                 randomObjectsProperty(game_object);
             }
@@ -156,12 +162,26 @@ public class main_camera_2023 : MonoBehaviour
         }
     }
     // adjust sampling space (where the camera renders a picture)
-    void randomLocation(){
+    void randomLocation(bool Front){
         var randX = UnityEngine.Random.Range(-25.0f, 9.0f);
         var randY = UnityEngine.Random.Range(-4.0f, 6.5f);
         var randZ = UnityEngine.Random.Range(-25.0f, 0.0f);
+        var randX_Rot = UnityEngine.Random.Range(-12.0f, 12.0f);
+        var randY_Rot = UnityEngine.Random.Range(-45.0f, 45.0f);
+        var randZ_Rot = UnityEngine.Random.Range(-20.0f, 20.0f);
+        if (!Front) {
+            randX = UnityEngine.Random.Range(-18.0f, 1.0f);
+            randY = UnityEngine.Random.Range(-2.0f, 7f);
+            randZ = UnityEngine.Random.Range(-30.0f, -10.0f);
+            randX_Rot = UnityEngine.Random.Range(80.0f, 100.0f);
+            //randY_Rot = UnityEngine.Random.Range(-45.0f, 45.0f);
+            randZ_Rot = UnityEngine.Random.Range(-45.0f, 45.0f);
+        }
+
         Vector3 newLocation = new Vector3(randX, randY, randZ);
+        Vector3 newRotation = new Vector3(randX_Rot, randY_Rot, randZ_Rot);
         GameObject.Find("Main Camera").transform.position = newLocation;
+        GameObject.Find("Main Camera").transform.rotation = Quaternion.Euler(newRotation);
     }
     void randomSkyBox(){
         int randInt = UnityEngine.Random.Range(0, skyboxes.Length-1);
