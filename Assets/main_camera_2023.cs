@@ -13,10 +13,9 @@ public class main_camera_2023 : MonoBehaviour
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
     string split = "train"; // sample category ("train", "val", "test")
-    
     // SELECT YOUR DATASET
-    static int dataSelection = 1;
-    bool camSelection = false; // true: front camera, false: down camera
+    static int dataSelection = 4;
+    bool camSelection = true; // true: front camera, false: down camera
     // dataset name
     static string[] dataset_ids = { "All",
                                     "Buoy",
@@ -27,13 +26,13 @@ public class main_camera_2023 : MonoBehaviour
                                                     new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
                                                     new int[] {0,1,2},
-                                                    new int[] {0,1,2}
+                                                    new int[] {0,0,1,2}
                                                     };
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
                                                         new string[] {"earthbuoy1","earthbuoy2","abydoesbuoy1","abydoesbuoy2"},
                                                         new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
                                                         new string[] {"Gate_0","Gate_1", "Gate_2"},
-                                                        new string[] {"Bin_Cover","Bin_1", "Bin_2"},
+                                                        new string[] {"Bin_Cover_1","Bin_Cover_2","Bin_1", "Bin_2"},
                                                         };
     string dataset_id = dataset_ids[dataSelection];
     static int[] GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
@@ -85,6 +84,10 @@ public class main_camera_2023 : MonoBehaviour
         print("Generating Dataset Path");
         print(success);
 
+        // camera forward/downward
+        if (dataSelection > 3) {
+            camSelection = false;
+        } else { camSelection = true;}
     }
     private IEnumerator GenerateData()
     {
@@ -92,18 +95,7 @@ public class main_camera_2023 : MonoBehaviour
         spacekeypressed = true;
             // generate 10 images and text files for each press
         if (FileCounter < FileCap){
-            randomLocation(camSelection);   // camera position
-            randomSkyBox();     // skybox material
-            randomRotation();   // pool rotation
-            randomRenderOptions();  // engine render settings (fog)
-            if (dataSelection != 3){
-                randomObjectsProperty(game_object); // game object material rotation
-            }
-            // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Water Volume");
-            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
-            gvscript.randomWaterColor();
-
+            
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
@@ -113,6 +105,16 @@ public class main_camera_2023 : MonoBehaviour
                 FileCounter++;
                 print("file: " + FileCounter + " " + split);
             }
+            randomLocation(camSelection);   // camera position
+            randomSkyBox();     // skybox material
+            randomRotation();   // pool rotation
+            randomRenderOptions();  // engine render settings (fog)
+            randomObjectsProperty(game_object); // game object material rotation
+            
+            // global volume settings (filters)
+            GameObject global_volume = GameObject.Find("Water Volume");
+            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
+            gvscript.randomWaterColor();
             //FileCounter++;
             //print(goal);
         }
@@ -136,18 +138,25 @@ public class main_camera_2023 : MonoBehaviour
             trainValTest();
             print(split);
         }
-        if (Input.GetKeyDown(KeyCode.O)) {
+        if (Input.GetKeyDown(KeyCode.O)) {            
+            for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                goal[i] = calcBBoxOnScreen(game_object[i]);
+            }
+
             randomSkyBox();
             randomRotation();
             randomRenderOptions();
             randomLocation(camSelection);
-            if (dataSelection != 3){
-                randomObjectsProperty(game_object);
-            }
+            randomObjectsProperty(game_object);
             // global volume settings (filters)
             GameObject global_volume = GameObject.Find("Water Volume");
             WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
             gvscript.randomWaterColor();
+        }
+        if (Input.GetKeyDown(KeyCode.T)){
+            for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                goal[i] = calcBBoxOnScreen(game_object[i]);
+            }
         }
     }
     
@@ -196,28 +205,42 @@ public class main_camera_2023 : MonoBehaviour
         swimming_pool.transform.Rotate(0.0f, 15.0f, 0.0f, Space.World);
         GameObject DecalProjector = GameObject.Find("Decal_Projector");
         DecalProjector.transform.Rotate(0.0f, 10.0f, 0.0f, Space.World);
+        GameObject world_light = GameObject.Find("Directional Light");
+        var randX_Rot = UnityEngine.Random.Range(45.0f, 135.0f);
+        var randY_Rot = UnityEngine.Random.Range(-60.0f, 60.0f);
+        world_light.transform.rotation = Quaternion.Euler(new Vector3(randX_Rot, randY_Rot, 0.0f));
     }
     void randomRenderOptions(){
         RenderSettings.fogEndDistance = UnityEngine.Random.Range(50, 350);
     }
     void randomObjectsProperty(GameObject[] game_objects){
-        for (int i = 0; i < game_objects.Length; i++){
-            for (int j = 0; j < game_objects[i].transform.childCount; j++){
-                var childObject = game_objects[i].transform.GetChild(j).gameObject;
-                var m = childObject.GetComponent<Renderer>().material;
-                m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
-                
-                //print(m);
-            }
-            var _m = game_objects[i].GetComponent<Renderer>().material;
-            _m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
+        if (dataSelection == 1){
+            for (int i = 0; i < game_objects.Length; i++){
+            //for (int j = 0; j < game_objects[i].transform.childCount; j++){
+            //    var childObject = game_objects[i].transform.GetChild(j).gameObject;
+            //    var m = childObject.GetComponent<Renderer>().material;
+            //    m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
+            //    
+            //    //print(m);
+            //}
+                var _m = game_objects[i].GetComponent<Renderer>().material;
+                _m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
             //for (int j = 0; j < parts.Length; j++){
             //    var m = parts[j].GetComponent<Renderer>().material;
             //    m.SetFloat("_Rotation", UnityEngine.Random.Range(0, 2*3.1415926f));
             //    print(m);
             //}
+            }
         }
-        
+        else if (dataSelection == 4) {
+            for (int i = 0; i < game_objects.Length; i++){
+                print(game_objects[i]);
+                print(game_objects[i].name);
+                if (game_objects[i].name == "Bin_Cover_1" || game_objects[i].name == "Bin_Cover_2"){
+                    game_objects[i].transform.localPosition = new Vector3(0, 1.6f, UnityEngine.Random.Range(-2.0f, 2.0f));
+                }
+            }
+        }
     }
     int checkDataSensible(float center_w, float center_h, float w, float h){
         // center of object off the screen
@@ -365,6 +388,9 @@ public class main_camera_2023 : MonoBehaviour
         screen_coords[5] = camera.WorldToScreenPoint(c6_v);
         screen_coords[6] = camera.WorldToScreenPoint(c7_v);
         screen_coords[7] = camera.WorldToScreenPoint(c8_v);
+        for (int i = 0; i < 8; i++){
+        print(screen_coords[i]);
+        }
         //print(c1_screen);
                 // min/max of x and y locations
         float min_x = 0, min_y = 0;
@@ -388,12 +414,14 @@ public class main_camera_2023 : MonoBehaviour
                 max_y = max_axis;
             }
         }
+        
         float width = max_x-min_x;
         float height = max_y-min_y;
         //goal = new Rect(min_x,min_y,width,height);
 
         // [0,0] top left of the screen
         Rect goal_ = new Rect(min_x,imgHeight-max_y,width,height);
+        print(goal_.ToString());
         return goal_;
     }
 
