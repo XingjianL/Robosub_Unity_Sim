@@ -13,8 +13,8 @@ public class main_camera_2023 : MonoBehaviour
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
     string split = "train"; // sample category ("train", "val", "test")
-    // SELECT YOUR DATASET
-    static int dataSelection = 4;
+    // SELECT YOUR DATASET (Change this)
+    static int dataSelection = 1; // which one in dataset_ids (start at 0)
     bool camSelection = true; // true: front camera, false: down camera
     // dataset name
     static string[] dataset_ids = { "All",
