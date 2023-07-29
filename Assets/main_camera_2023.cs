@@ -14,8 +14,8 @@ public class main_camera_2023 : MonoBehaviour
     int imgHeight = 480;
     string split = "train"; // sample category ("train", "val", "test")
     // SELECT YOUR DATASET (Change this)
-    static int dataSelection = 3; // which one in dataset_ids (start at 0)
-    bool camSelection = true; // true: front camera, false: down camera
+    static int dataSelection = 4; // which one in dataset_ids (start at 0)
+    bool camSelection = false; // true: front camera, false: down camera
     // dataset name
     static string[] dataset_ids = { "All",
                                     "Buoy",
@@ -25,13 +25,13 @@ public class main_camera_2023 : MonoBehaviour
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
-                                                    new int[] {0,1,2},
+                                                    new int[] {0,1,2,1,2},
                                                     new int[] {0,0,0,1,2,1,2,1,2}
                                                     };
     static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
                                                         new string[] {"earthbuoy1","earthbuoy2","abydoesbuoy1","abydoesbuoy2"},
                                                         new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
-                                                        new string[] {"Gate_0","Gate_1", "Gate_2"},
+                                                        new string[] {"Gate_0","Gate_1", "Gate_2", "Gate_3", "Gate_4"},
                                                         new string[] {"Bin_Cover_1","Bin_Cover_2","Bin_Cover_3","Bin_1", "Bin_2","Bin_3","Bin_4","Bin_5","Bin_6"},
                                                         };
     string dataset_id = dataset_ids[dataSelection];
@@ -128,6 +128,7 @@ public class main_camera_2023 : MonoBehaviour
             print("COROUTINE BREAK");
             yield break;
         }
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitForEndOfFrame();
     }
     // Update is called once per frame
@@ -182,9 +183,9 @@ public class main_camera_2023 : MonoBehaviour
         var base_texture = Resources.Load<Texture2D>(pool_base_colors[randBase]);
         var norm_texture = Resources.Load<Texture2D>(pool_normals[randNorm]);
         foreach (var m in pool_mat){
-            print(m.name);
+            //print(m.name);
             if (m.name.Contains("esp_tile_color1")){
-                print(string.Join(", ", m.GetTexturePropertyNames()));
+                //print(string.Join(", ", m.GetTexturePropertyNames()));
                 m.SetTexture("_BaseMap", base_texture);
                 m.SetTexture("_BumpMap", norm_texture);
             }
@@ -193,7 +194,10 @@ public class main_camera_2023 : MonoBehaviour
     // adjust sampling space (where the camera renders a picture)
     void randomLocation(bool Front){
         var randX = UnityEngine.Random.Range(-25.0f, 9.0f);
-        var randY = UnityEngine.Random.Range(-4.0f, 6.5f);
+        if (dataSelection == 3){
+            randX += 8;
+        }
+        var randY = UnityEngine.Random.Range(-6.0f, 6.5f);
         var randZ = UnityEngine.Random.Range(-25.0f, 0.0f);
         var randX_Rot = UnityEngine.Random.Range(-12.0f, 12.0f);
         var randY_Rot = UnityEngine.Random.Range(-45.0f, 45.0f);
