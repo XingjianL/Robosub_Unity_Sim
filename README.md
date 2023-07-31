@@ -20,5 +20,9 @@ This is a Unity Project with a focus on synthetic data generation for tasks in t
 ![sample image](/example.png)
 
 ## Generated Images w/ BBox for YOLOv5 training
+### Gate
+![sample image](/gate.jpg)
+### Buoy
 ![sample image](/buoy.jpg)
+### Bins
 ![sample image](/bins.jpg)
