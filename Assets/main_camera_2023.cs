@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-
+//using UnityEngine.Windows;
 public class main_camera_2023 : MonoBehaviour
 {
     Camera camera;
@@ -100,12 +100,12 @@ public class main_camera_2023 : MonoBehaviour
         init_rand_settings();
 
         // path to dataset storage
-        var success = Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/train");
-        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/val");
-        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/test");
-        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
-        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
-        Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
+        var success = System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/train");
+        System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/val");
+        System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/labels/test");
+        System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
+        System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
+        System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
         print("Generating Dataset Path");
         print(success);
 
@@ -149,28 +149,28 @@ public class main_camera_2023 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || spacekeypressed) {
+        if (UnityEngine.Input.GetKeyDown(KeyCode.Space) || spacekeypressed) {
             StartCoroutine(GenerateData());
         }
 
         // get camera location of these vertices
-        if (Input.GetKeyDown(KeyCode.P)) {
+        if (UnityEngine.Input.GetKeyDown(KeyCode.P)) {
             trainValTest();
             print(split);
         }
-        if (Input.GetKeyDown(KeyCode.O)) {            
+        if (UnityEngine.Input.GetKeyDown(KeyCode.O)) {            
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
 
             
         }
-        if (Input.GetKeyDown(KeyCode.T)){
+        if (UnityEngine.Input.GetKeyDown(KeyCode.T)){
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
         }
-        if (Input.GetKeyDown(KeyCode.S)){
+        if (UnityEngine.Input.GetKeyDown(KeyCode.S)){
             swapModes();
             Start();
         }
@@ -367,7 +367,7 @@ public class main_camera_2023 : MonoBehaviour
         print("png: " + save_path);
         if (generate_data) 
             //print("img: " + FileCounter);
-            UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
+            File.WriteAllBytes(save_path, Bytes);
     }
     
     bool saveTxt(){
@@ -402,7 +402,7 @@ public class main_camera_2023 : MonoBehaviour
                 //print(dataPoint);
             var Bytes = System.Text.Encoding.UTF8.GetBytes(dataPoint);
             if (generate_data) 
-                UnityEngine.Windows.File.WriteAllBytes(save_path, Bytes);
+                File.WriteAllBytes(save_path, Bytes);
         }
         return validDataCount > 0;
     }
