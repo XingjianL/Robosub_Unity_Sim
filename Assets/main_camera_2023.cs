@@ -50,6 +50,9 @@ public class main_camera_2023 : MonoBehaviour
     // random settings
     // skyboxes
     Material[] skyboxes = new Material[9];
+    // water
+    GameObject global_volume;
+    WaterPostProcess gvscript;
     private void swapModes(){
         dataSelection += 1;
         if (dataSelection >= dataset_ids.Length){
@@ -110,6 +113,8 @@ public class main_camera_2023 : MonoBehaviour
         if (dataSelection > 3) {
             camSelection = false;
         } else { camSelection = true;}
+        global_volume = GameObject.Find("Water Volume");
+        gvscript = global_volume.GetComponent<WaterPostProcess>();
     }
     private IEnumerator GenerateData()
     {
@@ -127,17 +132,8 @@ public class main_camera_2023 : MonoBehaviour
                 FileCounter++;
                 print("file: " + FileCounter + " " + split);
             }
-            randomLocation(camSelection);   // camera position
-            randomTexture();    // pool texture
-            randomSkyBox();     // skybox material
-            randomRotation();   // pool rotation
-            randomRenderOptions();  // engine render settings (fog)
-            randomObjectsProperty(game_object); // game object material rotation
-            
-            // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Water Volume");
-            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
-            gvscript.randomWaterColor();
+            randomRoutine();
+
             //FileCounter++;
             //print(goal);
         }
@@ -167,16 +163,7 @@ public class main_camera_2023 : MonoBehaviour
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
 
-            randomSkyBox();
-            randomTexture();    // pool texture
-            randomRotation();
-            randomRenderOptions();
-            randomLocation(camSelection);
-            randomObjectsProperty(game_object);
-            // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Water Volume");
-            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
-            gvscript.randomWaterColor();
+            
         }
         if (Input.GetKeyDown(KeyCode.T)){
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
@@ -199,6 +186,26 @@ public class main_camera_2023 : MonoBehaviour
             split = "train";
         }
     }
+    void randomRoutine(){
+        randomSkyBox();
+        randomTexture();    // pool texture
+        randomRotation();
+        randomRenderOptions();
+        randomLocation(camSelection);
+        randomObjectsProperty(game_object);
+        // global volume settings (filters)
+        gvscript.randomWaterColor();
+
+        var randFOV = UnityEngine.Random.Range(40, 102);
+        var randFocalLength = UnityEngine.Random.Range(15.0f, 25.0f);
+        camera.fieldOfView = randFOV;
+        camera.focalLength = randFocalLength;
+        //randomCameraConfig(camera);
+        var display_cam = GameObject.Find("Main_Camera_Display").GetComponent<Camera>();
+        display_cam.fieldOfView = randFOV;
+        display_cam.focalLength = randFocalLength;
+    }
+
     void randomTexture(){
         var pool_mat = GameObject.Find("structure").GetComponent<Renderer>().materials;
         var randBase = UnityEngine.Random.Range(0, 3);
@@ -508,16 +515,7 @@ public class main_camera_2023 : MonoBehaviour
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
 
-            randomSkyBox();
-            randomTexture();    // pool texture
-            randomRotation();
-            randomRenderOptions();
-            randomLocation(camSelection);
-            randomObjectsProperty(game_object);
-            // global volume settings (filters)
-            GameObject global_volume = GameObject.Find("Water Volume");
-            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
-            gvscript.randomWaterColor();
+            randomRoutine();
         }
         button_rect.y += 50;
         //button_rect.height = button_rect.height * 2;
