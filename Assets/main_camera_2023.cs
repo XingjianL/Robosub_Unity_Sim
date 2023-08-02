@@ -12,14 +12,16 @@ public class main_camera_2023 : MonoBehaviour
     int FileCap = FileBatch;      
     int imgWidth = 640;     // image properties
     int imgHeight = 480;
+    int img_choice = 0;
+    string[] resolutions =new string[] {"640x480", "640x640", "1280x960", "1280x1280", "1920x1080", "320x320"};
     string split = "train"; // sample category ("train", "val", "test")
     // SELECT YOUR DATASET (Change this)
     static int dataSelection = 4; // which one in dataset_ids (start at 0)
     bool camSelection = false; // true: front camera, false: down camera
     // dataset name
-    static string[] dataset_ids = { "All",
+    static string[] dataset_ids = { "All (not work)",
                                     "Buoy",
-                                    "Torpedoes",
+                                    "Torpedoes (not work)",
                                     "Gate",
                                     "Bins"};
     static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
@@ -48,7 +50,24 @@ public class main_camera_2023 : MonoBehaviour
     // random settings
     // skyboxes
     Material[] skyboxes = new Material[9];
-
+    private void swapModes(){
+        dataSelection += 1;
+        if (dataSelection >= dataset_ids.Length){
+            dataSelection = 0;
+        }
+        if (dataSelection == 4){
+            camSelection = false;
+        } else {
+            camSelection = true;
+        }
+        dataset_id = dataset_ids[dataSelection];
+        GameObjectClassIDs = GameObjectClassIDs_Collection[dataSelection];
+        GameObjectSceneIDs = GameObjectSceneIDs_Collection[dataSelection];
+    
+        game_object = new GameObject[GameObjectClassIDs.Length];
+        goal = new Rect[GameObjectClassIDs.Length];
+        print("Swapped to "+dataset_id);
+    }
     // coroutines
     private bool spacekeypressed = false;
     void init_rand_settings(){
@@ -163,6 +182,10 @@ public class main_camera_2023 : MonoBehaviour
             for(int i = 0; i < GameObjectClassIDs.Length; i++){
                 goal[i] = calcBBoxOnScreen(game_object[i]);
             }
+        }
+        if (Input.GetKeyDown(KeyCode.S)){
+            swapModes();
+            Start();
         }
     }
     
@@ -448,13 +471,106 @@ public class main_camera_2023 : MonoBehaviour
         print(goal_.ToString());
         return goal_;
     }
-
+    void changeCamResolution(Camera cam){
+        cam.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
+    }
     
 
     void OnGUI()
     {
-        for (int i = 0; i < GameObjectClassIDs.Length; i++){
-            GUI.Box(goal[i], "box"+i.ToString());
+        var display_cam = GameObject.Find("Main_Camera_Display").GetComponent<Camera>();
+        int display_width = display_cam.pixelWidth;
+        int display_height = display_cam.pixelHeight;
+        float w_ratio = (float)display_width / imgWidth;
+        float h_ratio = (float)display_height / imgHeight;
+        //changeCamResolution(display_cam, imgWidth, imgHeight);
+        var button_rect = new Rect(display_width/20, display_height/20, display_width/4, 40);
+        GUI.Label(new Rect(10, display_height-40, display_width, 20),
+            "Total Images Generated: " + FileCounter + ". Display: "+display_width+"x"+display_height + ". Image: "+imgWidth+"x"+imgHeight);
+
+        // buttons
+        if (GUI.Button(button_rect, "Generate " + dataset_id)){
+            StartCoroutine(GenerateData());
         }
+        button_rect.y += 50;
+        if (GUI.Button(button_rect, "Change data gen \n(now: " + dataset_id + ")")){
+            swapModes();
+            Start();
+        }
+        button_rect.y += 50;
+        if (GUI.Button(button_rect, "Change Split \n(now: " + split + ")")){
+            trainValTest();
+            print(split);
+        }
+        button_rect.y += 50;
+        if (GUI.Button(button_rect, "Demo randomization")){
+            for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                goal[i] = calcBBoxOnScreen(game_object[i]);
+            }
+
+            randomSkyBox();
+            randomTexture();    // pool texture
+            randomRotation();
+            randomRenderOptions();
+            randomLocation(camSelection);
+            randomObjectsProperty(game_object);
+            // global volume settings (filters)
+            GameObject global_volume = GameObject.Find("Water Volume");
+            WaterPostProcess gvscript = global_volume.GetComponent<WaterPostProcess>();
+            gvscript.randomWaterColor();
+        }
+        button_rect.y += 50;
+        //button_rect.height = button_rect.height * 2;
+        if (GUI.Button(button_rect, "Demo Bounding Box\nNeed same aspect ratio")){
+            for(int i = 0; i < GameObjectClassIDs.Length; i++){
+                goal[i] = calcBBoxOnScreen(game_object[i]);
+            }
+        }
+        button_rect.y += 50;
+        button_rect.height = button_rect.height * 1.5f;
+        int new_choice = GUI.SelectionGrid(button_rect, img_choice, resolutions,2);
+        if (new_choice != img_choice){
+            img_choice = new_choice;
+            print("Changed Image Resolution");
+            switch (img_choice){
+                case 0:
+                imgWidth = 640;
+                imgHeight = 480;
+                break;
+                case 1:
+                imgWidth = 640;
+                imgHeight = 640;
+                break;
+                case 2:
+                imgWidth = 1280;
+                imgHeight = 960;
+                break;
+                case 3:
+                imgWidth = 1280;
+                imgHeight = 1280;
+                break;
+                case 4:
+                imgWidth =1920;
+                imgHeight = 1080;
+                break;
+                case 5:
+                imgWidth = 320;
+                imgHeight = 320;
+                break;
+            }
+            changeCamResolution(camera);
+        }
+        
+        for (int i = 0; i < GameObjectClassIDs.Length; i++){
+            Rect _goal = new Rect(0,0,0,0);
+            _goal.x = goal[i].x * w_ratio;
+            _goal.y = goal[i].y * h_ratio;
+            _goal.width = goal[i].width * w_ratio;
+            _goal.height = goal[i].height * h_ratio;
+
+            GUI.Box(_goal, "box"+i.ToString());
+        }
+        
+        
     }
 }
