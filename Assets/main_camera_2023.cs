@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.Rendering.Universal;
 //using UnityEngine.Windows;
 public class main_camera_2023 : MonoBehaviour
 {
@@ -16,24 +17,24 @@ public class main_camera_2023 : MonoBehaviour
     string[] resolutions =new string[] {"640x480", "640x640", "1280x960", "1280x1280", "1920x1080", "320x320"};
     string split = "train"; // sample category ("train", "val", "test")
     // SELECT YOUR DATASET (Change this)
-    static int dataSelection = 4; // which one in dataset_ids (start at 0)
+    static int dataSelection = 0; // which one in dataset_ids (start at 0)
     bool camSelection = false; // true: front camera, false: down camera
     // dataset name
-    static string[] dataset_ids = { "All (not work)",
+    static string[] dataset_ids = { //"All (not work)",
                                     "Buoy",
-                                    "Torpedoes (not work)",
+                                    //"Torpedoes (not work)",
                                     "Gate",
                                     "Bins"};
-    static int[][] GameObjectClassIDs_Collection = {new int[] {0,1,2,3},
+    static int[][] GameObjectClassIDs_Collection = {//new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
-                                                    new int[] {0,1,2,3},
-                                                    new int[] {0,1,2,1,2},
+                                                    //new int[] {0,1,2,3},
+                                                    new int[] {0,1,2,1,2,3,3},
                                                     new int[] {0,0,0,1,2,1,2,1,2}
                                                     };
-    static string[][] GameObjectSceneIDs_Collection = { new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
+    static string[][] GameObjectSceneIDs_Collection = { //new string[] {"Buoy_1","Buoy_2","Torpedoes_2","Torpedoes_1"},
                                                         new string[] {"earthbuoy1","earthbuoy2","abydoesbuoy1","abydoesbuoy2"},
-                                                        new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
-                                                        new string[] {"Gate_0","Gate_1", "Gate_2", "Gate_3", "Gate_4"},
+                                                        //new string[] {"Torpedoes_1","Torpedoes_2","Torp_1_small","Torp_2_small"},
+                                                        new string[] {"Gate_0","Gate_1", "Gate_2", "Gate_3", "Gate_4","left_black","right_red"},
                                                         new string[] {"Bin_Cover_1","Bin_Cover_2","Bin_Cover_3","Bin_1", "Bin_2","Bin_3","Bin_4","Bin_5","Bin_6"},
                                                         };
     string dataset_id = dataset_ids[dataSelection];
@@ -45,7 +46,7 @@ public class main_camera_2023 : MonoBehaviour
     bool generate_data = true; // if images should be saved
 
     // resources
-    static string[] pool_base_colors = new string[] {"pool_base_1","pool_base_2","pool_base_3","pool_base_4"};
+    static string[] pool_base_colors = new string[] {"pool_base_1","pool_base_2","pool_base_3","pool_base_4","pool_base_5"};
     static string[] pool_normals = new string[] {"pool_norm_1","pool_norm_2","pool_norm_3","pool_norm_4"};
     // random settings
     // skyboxes
@@ -58,7 +59,7 @@ public class main_camera_2023 : MonoBehaviour
         if (dataSelection >= dataset_ids.Length){
             dataSelection = 0;
         }
-        if (dataSelection == 4){
+        if (dataSelection == 2){
             camSelection = false;
         } else {
             camSelection = true;
@@ -69,7 +70,7 @@ public class main_camera_2023 : MonoBehaviour
     
         game_object = new GameObject[GameObjectClassIDs.Length];
         goal = new Rect[GameObjectClassIDs.Length];
-        print("Swapped to "+dataset_id);
+        //print("Swapped to "+dataset_id);
     }
     // coroutines
     private bool spacekeypressed = false;
@@ -91,8 +92,8 @@ public class main_camera_2023 : MonoBehaviour
             game_object[i] = GameObject.Find(GameObjectSceneIDs[i]);
         }
         camera.enabled = true;
-        print("camera start");
-        print(game_object[0].transform.position);
+        //print("camera start");
+        //print(game_object[0].transform.position);
 
         if (generate_data && camera.targetTexture == null){
             camera.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
@@ -106,11 +107,11 @@ public class main_camera_2023 : MonoBehaviour
         System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/train");
         System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/val");
         System.IO.Directory.CreateDirectory(Application.persistentDataPath+"/ML_Generated_Dataset/yolov5/"+dataset_id+"/images/test");
-        print("Generating Dataset Path");
-        print(success);
+        //print("Generating Dataset Path");
+        //print(success);
 
         // camera forward/downward
-        if (dataSelection > 3) {
+        if (dataSelection == 2) {
             camSelection = false;
         } else { camSelection = true;}
         global_volume = GameObject.Find("Water Volume");
@@ -118,7 +119,7 @@ public class main_camera_2023 : MonoBehaviour
     }
     private IEnumerator GenerateData()
     {
-        print("COROUTINE");
+        //print("COROUTINE");
         spacekeypressed = true;
             // generate 10 images and text files for each press
         if (FileCounter < FileCap){
@@ -130,7 +131,7 @@ public class main_camera_2023 : MonoBehaviour
             if (saveTxt()){
                 saveImage();
                 FileCounter++;
-                print("file: " + FileCounter + " " + split);
+                //print("file: " + FileCounter + " " + split);
             }
             randomRoutine();
 
@@ -188,7 +189,9 @@ public class main_camera_2023 : MonoBehaviour
     }
     void randomRoutine(){
         randomSkyBox();
-        randomTexture();    // pool texture
+        randomTexture("structure");    // pool texture
+        randomTexture("gate_black_l");
+        randomTexture("gate_black_r");
         randomRotation();
         randomRenderOptions();
         randomLocation(camSelection);
@@ -206,25 +209,29 @@ public class main_camera_2023 : MonoBehaviour
         display_cam.focalLength = randFocalLength;
     }
 
-    void randomTexture(){
-        var pool_mat = GameObject.Find("structure").GetComponent<Renderer>().materials;
-        var randBase = UnityEngine.Random.Range(0, 3);
+    void randomTexture(string object_name){
+        var pool_mat = GameObject.Find(object_name).GetComponent<Renderer>().materials;
+        var randBase = UnityEngine.Random.Range(0, 4);
         var randNorm = UnityEngine.Random.Range(0, 3);
         var base_texture = Resources.Load<Texture2D>(pool_base_colors[randBase]);
         var norm_texture = Resources.Load<Texture2D>(pool_normals[randNorm]);
         foreach (var m in pool_mat){
             //print(m.name);
-            if (m.name.Contains("esp_tile_color1")){
+            if (m.name.Contains("esp_tile_color1") || m.name.Contains("esp_tile_color2")){
                 //print(string.Join(", ", m.GetTexturePropertyNames()));
                 m.SetTexture("_BaseMap", base_texture);
                 m.SetTexture("_BumpMap", norm_texture);
+            }
+            if (m.name.Contains("gate_black")){
+                print("Gate top");
+                m.SetColor("_BaseColor", new Color(0,0,0,UnityEngine.Random.Range(0f,1f)));
             }
         }
     }
     // adjust sampling space (where the camera renders a picture)
     void randomLocation(bool Front){
         var randX = UnityEngine.Random.Range(-25.0f, 9.0f);
-        if (dataSelection == 3){
+        if (dataSelection == 1){
             randX += 8;
         }
         var randY = UnityEngine.Random.Range(-6.0f, 6.5f);
@@ -257,8 +264,11 @@ public class main_camera_2023 : MonoBehaviour
         // not really random
         GameObject swimming_pool = GameObject.Find("exterior_swimming_pool");
         swimming_pool.transform.Rotate(0.0f, 15.0f, 0.0f, Space.World);
-        GameObject DecalProjector = GameObject.Find("Decal_Projector");
-        DecalProjector.transform.Rotate(0.0f, 10.0f, 0.0f, Space.World);
+        GameObject decalProjector = GameObject.Find("Decal_Projector");
+        //decalProjector.transform.Rotate(0.0f, 10.0f, 0.0f, Space.World);
+        decalProjector.transform.rotation = Quaternion.Euler(new Vector3(UnityEngine.Random.Range(30.0f, 80.0f), 0.0f, 0.0f));
+        decalProjector.GetComponent<DecalProjector>().fadeFactor = UnityEngine.Random.Range(0.7f,0.9f);
+        decalProjector.GetComponent<DecalProjector>().uvScale = new Vector2(UnityEngine.Random.Range(0,10)*2+10, UnityEngine.Random.Range(0,10)*2+10);
         GameObject world_light = GameObject.Find("Directional Light");
         var randX_Rot = UnityEngine.Random.Range(45.0f, 135.0f);
         var randY_Rot = UnityEngine.Random.Range(-60.0f, 60.0f);
@@ -268,7 +278,7 @@ public class main_camera_2023 : MonoBehaviour
         RenderSettings.fogEndDistance = UnityEngine.Random.Range(50, 350);
     }
     void randomObjectsProperty(GameObject[] game_objects){
-        if (dataSelection == 1){
+        if (dataSelection == 0){
             for (int i = 0; i < game_objects.Length; i++){
             //for (int j = 0; j < game_objects[i].transform.childCount; j++){
             //    var childObject = game_objects[i].transform.GetChild(j).gameObject;
@@ -286,7 +296,7 @@ public class main_camera_2023 : MonoBehaviour
             //}
             }
         }
-        else if (dataSelection == 4) {
+        else if (dataSelection == 2) {
             for (int i = 0; i < game_objects.Length; i++){
                 //print(game_objects[i]);
                 //print(game_objects[i].name);
@@ -475,7 +485,7 @@ public class main_camera_2023 : MonoBehaviour
 
         // [0,0] top left of the screen
         Rect goal_ = new Rect(min_x,imgHeight-max_y,width,height);
-        print(goal_.ToString());
+        //print(goal_.ToString());
         return goal_;
     }
     void changeCamResolution(Camera cam){
@@ -492,9 +502,9 @@ public class main_camera_2023 : MonoBehaviour
         float h_ratio = (float)display_height / imgHeight;
         //changeCamResolution(display_cam, imgWidth, imgHeight);
         var button_rect = new Rect(display_width/20, display_height/20, display_width/4, 40);
-        GUI.Label(new Rect(10, display_height-40, display_width, 20),
+        GUI.Label(new Rect(10, display_height-50, display_width, 20),
             "Total Images Generated: " + FileCounter + ". Display: "+display_width+"x"+display_height + ". Image: "+imgWidth+"x"+imgHeight);
-
+        GUI.Label(new Rect(10, display_height-25, display_width, 20), "Save to <user>/AppData/LocalLow/Aquapack/DataGen23/ for windows");
         // buttons
         if (GUI.Button(button_rect, "Generate " + dataset_id)){
             StartCoroutine(GenerateData());
@@ -507,7 +517,7 @@ public class main_camera_2023 : MonoBehaviour
         button_rect.y += 50;
         if (GUI.Button(button_rect, "Change Split \n(now: " + split + ")")){
             trainValTest();
-            print(split);
+            //print(split);
         }
         button_rect.y += 50;
         if (GUI.Button(button_rect, "Demo randomization")){
@@ -529,7 +539,7 @@ public class main_camera_2023 : MonoBehaviour
         int new_choice = GUI.SelectionGrid(button_rect, img_choice, resolutions,2);
         if (new_choice != img_choice){
             img_choice = new_choice;
-            print("Changed Image Resolution");
+            //print("Changed Image Resolution");
             switch (img_choice){
                 case 0:
                 imgWidth = 640;

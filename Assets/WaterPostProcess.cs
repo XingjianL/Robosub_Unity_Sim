@@ -43,6 +43,6 @@ public class WaterPostProcess : MonoBehaviour
         Material pool_material = pool_surface.GetComponent<Renderer>().material;
         pool_material.SetColor("_MiddleWaterColor", surfaceColor);
         pool_material.SetColor("_EdgeWaterColor", surfaceColor);
-        print("RANDOM COLOR");
+        //print("RANDOM COLOR");
     }
 }

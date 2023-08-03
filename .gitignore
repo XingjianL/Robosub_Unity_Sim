@@ -76,3 +76,4 @@ crashlytics-build.properties
 #/Assets/SkySeriesFreebie.meta
 
 Assets/ML_Generated_Dataset/yolov5/*/*/*/*
+/[Bb]uild_Linux/
