@@ -8,11 +8,13 @@ public class WaterPostProcess : MonoBehaviour
 {
     public Volume volume;
     ColorAdjustments colorAdj;
+    DepthOfField depthOf;
     public GameObject pool_surface;
     // Start is called before the first frame update
     void Start()
     {
         volume.profile.TryGet<ColorAdjustments>(out colorAdj);
+        volume.profile.TryGet<DepthOfField>(out depthOf);
     }
 
     // Update is called once per frame
@@ -35,6 +37,7 @@ public class WaterPostProcess : MonoBehaviour
         colorAdj.hueShift.value = UnityEngine.Random.Range(-5f, 5f);
         colorAdj.saturation.value = UnityEngine.Random.Range(0.0f, 90f);
         colorAdj.contrast.value = UnityEngine.Random.Range(0.0f, 20f);
+        depthOf.focusDistance.value = UnityEngine.Random.Range(6,8);
         // pool surface
         Color surfaceColor = new Color(85/255.0f, 
                                        randG/255.0f,

@@ -270,12 +270,20 @@ public class main_camera_2023 : MonoBehaviour
         decalProjector.GetComponent<DecalProjector>().fadeFactor = UnityEngine.Random.Range(0.7f,0.9f);
         decalProjector.GetComponent<DecalProjector>().uvScale = new Vector2(UnityEngine.Random.Range(0,10)*2+10, UnityEngine.Random.Range(0,10)*2+10);
         GameObject world_light = GameObject.Find("Directional Light");
-        var randX_Rot = UnityEngine.Random.Range(45.0f, 135.0f);
-        var randY_Rot = UnityEngine.Random.Range(-60.0f, 60.0f);
+        var randX_Rot = UnityEngine.Random.Range(0f, 90f);
+        var randY_Rot = UnityEngine.Random.Range(-45.0f, 45.0f);
         world_light.transform.rotation = Quaternion.Euler(new Vector3(randX_Rot, randY_Rot, 0.0f));
+        var light_intensity = UnityEngine.Random.Range(1,3)*2;
+        world_light.GetComponent<Light>().intensity = light_intensity;
+        var godRays = GameObject.Find("GodRays").GetComponent<ParticleSystem>();
+        var main = godRays.main;
+        main.maxParticles = light_intensity*50;
+        godRays.Clear();
+        godRays.Play();
+        
     }
     void randomRenderOptions(){
-        RenderSettings.fogEndDistance = UnityEngine.Random.Range(50, 350);
+        RenderSettings.fogEndDistance = UnityEngine.Random.Range(30, 150);
     }
     void randomObjectsProperty(GameObject[] game_objects){
         if (dataSelection == 0){
