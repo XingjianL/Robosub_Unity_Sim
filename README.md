@@ -1,10 +1,12 @@
 # Robosub Unity Sim
 
-This is a Unity Project with a focus on synthetic data generation for tasks in the RoboSub Competition. It is completed, I am making a newer one using HDRP here [https://github.com/XingjianL/RoboSubSim](https://github.com/XingjianL/RoboSubSim), which will provide better water effects and with plans for robot simulation.
+This is a Unity Project with a focus on synthetic data generation for tasks in the RoboSub Competition. It is completed with Windows Executable downloads here (226 MB) [https://drive.google.com/file/d/1G6BQ-anK2811SeiVXbtDgLI6kDLVnVGy/view?usp=sharing](https://drive.google.com/file/d/1G6BQ-anK2811SeiVXbtDgLI6kDLVnVGy/view?usp=sharing). 
+
+I am making a newer one using HDRP with `2023.1.8f1` here [https://github.com/XingjianL/RoboSubSim](https://github.com/XingjianL/RoboSubSim), which will provide better water effects and with plans for robot simulation.
 
 - Capable of auto-labeling bounding boxes for YOLOv5 training.
 - Domain Randomization (Scene Lighting and Depth, Camera Location and Rotation, Game Object Randomization)
-- Not all bounding boxes are accurate (if obstructed it would still label, but it is fairly unlikely so usually it's fine to ignore)
+- Not all bounding boxes are accurate (if obstructed by fog or game objects it would still label, but it is fairly unlikely so usually it's fine to ignore)
 
 ## Usage
 
