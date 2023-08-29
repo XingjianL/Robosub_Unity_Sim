@@ -25,6 +25,7 @@ public class main_camera_2023 : MonoBehaviour
                                     //"Torpedoes (not work)",
                                     "Gate",
                                     "Bins"};
+    bool god_ray_enable = true;
     static int[][] GameObjectClassIDs_Collection = {//new int[] {0,1,2,3},
                                                     new int[] {0,1,2,3},
                                                     //new int[] {0,1,2,3},
@@ -277,7 +278,12 @@ public class main_camera_2023 : MonoBehaviour
         world_light.GetComponent<Light>().intensity = light_intensity;
         var godRays = GameObject.Find("GodRays").GetComponent<ParticleSystem>();
         var main = godRays.main;
-        main.maxParticles = light_intensity*50;
+        
+        if (god_ray_enable){
+            main.maxParticles = light_intensity*50;
+        } else {
+            main.maxParticles = 0;
+        }
         godRays.Clear();
         godRays.Play();
         
@@ -499,7 +505,6 @@ public class main_camera_2023 : MonoBehaviour
     void changeCamResolution(Camera cam){
         cam.targetTexture = new RenderTexture(imgWidth, imgHeight, 24);
     }
-    
 
     void OnGUI()
     {
@@ -525,6 +530,11 @@ public class main_camera_2023 : MonoBehaviour
         button_rect.y += 50;
         if (GUI.Button(button_rect, "Change Split \n(now: " + split + ")")){
             trainValTest();
+            //print(split);
+        }
+        button_rect.y += 50;
+        if (GUI.Button(button_rect, "Light Rays Enabled:" + god_ray_enable)){
+            god_ray_enable = !god_ray_enable;
             //print(split);
         }
         button_rect.y += 50;
